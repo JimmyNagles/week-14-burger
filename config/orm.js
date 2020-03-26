@@ -1,0 +1,76 @@
+var connection= require("../config/connetion")
+
+function printQuestionMarks(num) {
+  var arr = [];
+
+  for (var i = 0; i < num; i++) {
+    arr.push("?");
+  }
+
+  return arr.toString();
+}
+
+// Helper function to convert object key/value pairs to SQL syntax
+function translateSql(ob) {
+  var arr = [];
+
+  // loop through the keys and push the key/value as a string int arr
+  for (var key in ob) {
+    var value = ob[key];
+    // check to skip hidden properties
+    if (Object.hasOwnProperty.call(ob, key)) {
+      // if string with spaces, add quotations (Lana Del Grey => 'Lana Del Grey')
+      if (typeof value === "string" && value.indexOf(" ") >= 0) {
+        value = "'" + value + "'";
+      }
+      // e.g. {name: 'Lana Del Grey'} => ["name='Lana Del Grey'"]
+      // e.g. {sleepy: true} => ["sleepy=true"]
+      arr.push(key + "=" + value);
+    }
+  }
+
+  // translate array of strings to a single comma-separated string
+  return arr.toString();
+}
+
+
+var orm = {
+  // The last variable cb represents the anonymous function being passed from server.js
+  selectAll: function(table, cb) {
+    var dbConnection = "SELECT * FROM " +table+";";
+    connection.query(dbConnection, function(err, result) {
+      if (err) throw err;
+      cb(result);
+    });
+  },
+
+  insertOne: function(table,cols,vals, cb) {
+    var dbConnection = "INSERT INTO "+table + "(" +cols.toString()+ ") "+ "VALUES (" +printQuestionMarks(vals.legnth)+ ") ";
+
+    console.log(dbConnection)
+    connection.query(dbConnection, function(err, result) {
+      if (err) throw err;
+      cb(result);
+    });
+  },
+  updateOne: function(table,objColVals, condition, cb) {
+    var dbConnection = "UPDATE "+table + " SET " +translateSql(objColVals)+ " WHERE" +condition;
+
+    console.log(dbConnection)
+    connection.query(dbConnection, function(err, result) {
+      if (err) throw err;
+      cb(result);
+    });
+  },
+  deleteOne: function(table,condition, cb) {
+    var dbConnection = "DELTE FROM "+table +" WHERE" +condition;
+
+    console.log(dbConnection)
+    connection.query(dbConnection, function(err, result) {
+      if (err) throw err;
+      cb(result);
+    });
+  }
+};
+
+module.exports = orm;

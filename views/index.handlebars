@@ -59,18 +59,21 @@
     <div class=" col s6 m6 l6 card-panel lime  black-text ">
 
              <h2>devour</h2>
- 
-     
-                {{#each menu}}
-                    <p>{{this.id}}</p>
-                    <p>{{this.burger_name}}</p>
+   
+                 <ul>
+                {{#each burgers}}
+                        {{#unless debored}}
+                    <li>
+                    <p>{{this.id}}.{{this.burger_name}}</p>
                     <p>{{this.devoured}}</p>
-
+                    
+                    </li>
+                    {{/unless}}
 
                 {{/each}}
                 
              
-             
+             </ul>
 
 
       
